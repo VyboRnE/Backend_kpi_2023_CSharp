@@ -1,0 +1,65 @@
+# Ignore Visual Studio Code settings
+./LabBackend/vs/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+LabBackend/[Dd]ebug/
+LabBackend/[Dd]ebugPublic/
+LabBackend/[Rr]elease/
+LabBackend/[Rr]eleases/
+LabBackend/x64/
+LabBackend/x86/
+LabBackend/[Ww][Ii][Nn]32/
+LabBackend/[Aa][Rr][Mm]/
+LabBackend/[Aa][Rr][Mm]64/
+LabBackend/bld/
+LabBackend/[Bb]in/
+LabBackend/[Oo]bj/
+LabBackend/[Ll]og/
+LabBackend/[Ll]ogs/
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# StyleCop
+StyleCopReport.xml
+
+# Files built by Visual Studio
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
