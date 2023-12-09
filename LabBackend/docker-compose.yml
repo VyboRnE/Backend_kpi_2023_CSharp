@@ -1,0 +1,12 @@
+﻿version: '3'
+
+services:
+ labbackend:
+   restart: always
+   build:
+     context: .
+     dockerfile: Dockerfile
+   environment:
+     PORT: "32770"
+   ports:
+     - "32770:8080"
