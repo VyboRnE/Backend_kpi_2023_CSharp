@@ -1,5 +1,5 @@
 # Ignore Visual Studio Code settings
-LabBackend/.vs/
+.vs/
 
 # User-specific files
 *.rsuser
@@ -9,20 +9,20 @@ LabBackend/.vs/
 *.sln.docstates
 
 # Build results
-LabBackend/[Dd]ebug/
-LabBackend/[Dd]ebugPublic/
-LabBackend/[Rr]elease/
-LabBackend/[Rr]eleases/
-LabBackend/x64/
-LabBackend/x86/
-LabBackend/[Ww][Ii][Nn]32/
-LabBackend/[Aa][Rr][Mm]/
-LabBackend/[Aa][Rr][Mm]64/
-LabBackend/bld/
-LabBackend/[Bb]in/
-LabBackend/[Oo]bj/
-LabBackend/[Ll]og/
-LabBackend/[Ll]ogs/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
 
 # .NET Core
 project.lock.json
