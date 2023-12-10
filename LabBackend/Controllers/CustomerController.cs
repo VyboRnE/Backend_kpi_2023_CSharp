@@ -1,5 +1,7 @@
+using LabBackend;
 using LabBackend.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Xml.Linq;
 
 namespace LabBackeend.Controllers
 {
@@ -8,40 +10,72 @@ namespace LabBackeend.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ILogger<CustomerController> _logger;
-
-        public CustomerController(ILogger<CustomerController> logger)
+        private readonly MemoryCacheService<CustomerModel> _memoryCacheService;
+        public CustomerController(ILogger<CustomerController> logger, MemoryCacheService<CustomerModel> memoryCacheService)
         {
             _logger = logger;
+            _memoryCacheService = memoryCacheService;
         }
         //user/<user_id>
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var customer = new CustomerModel { Id = id, Name = $"Customer {id}" };
-            return Ok(customer);
+            try
+            {
+                var customer = _memoryCacheService.GetById(id);
+                return Ok(customer);
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
-        //users IEnumerable<CustomerModel>
+        //users
         [HttpGet]
         public IActionResult Get()
         {
-            var customers = Enumerable.Range(1, 5).Select(index => new CustomerModel
+            try
             {
-                Id = index,
-                Name = $"Customer {index}"
-            });
-            return Ok(customers);
+                var customers = _memoryCacheService.GetAll();
+                return Ok(customers);
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
-        //user
+        //user?name=vasyl
         [HttpPost]
-        public IActionResult Post()
+        public IActionResult Post([FromQuery]string name)
         {
-            return Ok("New customer was added");
+            try
+            {
+                var customer = new CustomerModel
+                {
+                    Id = _memoryCacheService.index,
+                    Name = name
+                };
+                _memoryCacheService.Add(customer);
+                return Ok(customer);
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
         //user/<user_id>
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            return Ok($"Customer {id} was deleated.");
+            try
+            {
+                _memoryCacheService.DeleteById(id);
+                return Ok($"Customer {id} was deleated.");
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

@@ -1,4 +1,7 @@
 
+using LabBackend;
+using LabBackend.Models;
+
 namespace LabBackeend
 {
     public class Program
@@ -13,6 +16,10 @@ namespace LabBackeend
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddMemoryCache();
+            builder.Services.AddSingleton<MemoryCacheService<CustomerModel>>();
+            builder.Services.AddSingleton<MemoryCacheService<CategoryModel>>();
+            builder.Services.AddSingleton<MemoryCacheService<RecordModel>>();
 
             var app = builder.Build();
 

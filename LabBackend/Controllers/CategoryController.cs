@@ -9,40 +9,73 @@ namespace LabBackend.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ILogger<CategoryController> _logger;
-
-        public CategoryController(ILogger<CategoryController> logger)
+        private readonly MemoryCacheService<CategoryModel> _memoryCacheService;
+        //private int index = 0;
+        public CategoryController(ILogger<CategoryController> logger, MemoryCacheService<CategoryModel> memoryCacheService)
         {
             _logger = logger;
+            _memoryCacheService = memoryCacheService;
         }
         //category/<category_id>
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var category = new CategoryModel { Id = id, Name = $"Category {id}" };
-            return Ok(category);
+            try
+            {
+                var category = _memoryCacheService.GetById(id);
+                return Ok(category);
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
         //category
         [HttpGet]
         public IActionResult Get()
         {
-            var categories = Enumerable.Range(1, 5).Select(index => new CategoryModel
+            try
             {
-                Id = index,
-                Name = $"Category {index}"
-            });
-            return Ok(categories);
+                var categories = _memoryCacheService.GetAll();
+                return Ok(categories);
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
-        //category
+        //category?name=chlib
         [HttpPost]
-        public IActionResult Post()
+        public IActionResult Post([FromQuery] string name)
         {
-            return Ok("New category was added");
+            try
+            {
+                var category = new CategoryModel
+                {
+                    Id = _memoryCacheService.index,
+                    Name = name
+                };
+                _memoryCacheService.Add(category);
+                return Ok(category);
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
         //category/<category_id>
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            return Ok($"Category {id} was deleated.");
+            try
+            {
+                _memoryCacheService.DeleteById(id);
+                return Ok($"Category {id} was deleated.");
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }
