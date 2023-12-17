@@ -1,6 +1,6 @@
 
 using LabBackend;
-using LabBackend.Models;
+using LabBackend.Bussines.Models;
 
 namespace LabBackeend
 {

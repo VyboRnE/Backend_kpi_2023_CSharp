@@ -1,5 +1,5 @@
 using LabBackend;
-using LabBackend.Models;
+using LabBackend.Bussines.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
 

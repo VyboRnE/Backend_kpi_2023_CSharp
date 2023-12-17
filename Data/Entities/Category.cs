@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LabBackend.Models
+namespace LabBackend.Data.Entities
 {
-    public class CategoryModel
+    public class Category:BaseEntity
     {
-        public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
     }
 }

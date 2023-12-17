@@ -1,5 +1,5 @@
 ﻿using LabBackeend.Controllers;
-using LabBackend.Models;
+using LabBackend.Bussines.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LabBackend.Controllers

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LabBackend.Models
+namespace LabBackend.Bussines.Models
 {
-    public class CustomerModel
+    public class CategoryModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
