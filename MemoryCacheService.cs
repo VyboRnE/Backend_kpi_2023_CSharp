@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
-using LabBackend.Models;
 
 namespace LabBackend
 {

@@ -8,9 +8,11 @@ namespace LabBackend.Data.Entities
         [ForeignKey(nameof(Category))]
         public int CategoryId {  get; set; }
         public Category Category { get; set; }
+
         [ForeignKey(nameof(Customer))]
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }
+
         [ForeignKey(nameof(Currency))]
         public int CurrencyId { get; set; }
         public Currency Currency { get; set; }

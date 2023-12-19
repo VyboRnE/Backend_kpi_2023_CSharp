@@ -1,5 +1,7 @@
 ﻿using LabBackeend.Controllers;
-using LabBackend.Models;
+using LabBackend.Business.Interfaces;
+using LabBackend.Business.Models;
+using LabBackend.Business.Validation;
 using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
 
@@ -11,76 +13,68 @@ namespace LabBackend.Controllers
     {
         private readonly ILogger<RecordController> _logger;
         private readonly MemoryCacheService<RecordModel> _memoryCacheService;
-        public RecordController(ILogger<RecordController> logger, MemoryCacheService<RecordModel> memoryCacheService)
+        private readonly IRecordService _recordService;
+        public RecordController(IRecordService recordService)
         {
-            _logger = logger;
-            _memoryCacheService = memoryCacheService;
+            _recordService = recordService;
         }
         //record/<record_id>
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<ActionResult<RecordModel>> GetById(int id)
         {
             try
             {
-                var record = _memoryCacheService.GetById(id);
+                var record = await _recordService.GetByIdAsync(id);
                 return Ok(record);
             }
-            catch
+            catch (ShopException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
         //record?customerId=1&categoryId=1
         [HttpGet]
-        public IActionResult Get([FromQuery] int? customerId, int? categoryId)
+        public async Task<ActionResult<IEnumerable<RecordModel>>> Get([FromQuery] int? customerId, int? categoryId)
         {
             try
             {
-                if (customerId == null && categoryId == null) { return BadRequest(); }
-                var records = _memoryCacheService.GetAll();
+                if (customerId == null && categoryId == null) { return BadRequest("None of filters was chosen."); }
+                var records = await _recordService.GetAllAsync();
                 var filteredRecords = records
                     .Where(x => (x.CustomerId == customerId && x.CategoryId == categoryId) ||
                     (categoryId == null && x.CustomerId == customerId) ||
                     (customerId == null && x.CategoryId == categoryId));
                 return Ok(filteredRecords);
             }
-            catch
+            catch (ShopException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
-        //record?customerId=1&categoryId=1
+        //record
         [HttpPost]
-        public IActionResult Post([FromQuery] int customerId, int categoryId)
+        public async Task<ActionResult> Post([FromBody] RecordModel model)
         {
             try
             {
-                var record = new RecordModel
-                {
-                    Id = _memoryCacheService.index,
-                    CustomerId = customerId,
-                    CategoryId = categoryId,
-                    OrderTime = DateTime.Now,
-                    ReceiptSum = 100 + _memoryCacheService.index
-                };
-                _memoryCacheService.Add(record);
-                return Ok(record);
+                await _recordService.AddAsync(model);
+                return Ok(model);
             }
-            catch
+            catch (ShopException ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
         //record/<record_id>
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {
-                _memoryCacheService.DeleteById(id);
+                await _recordService.DeleteByIdAsync(id);
                 return Ok($"Record {id} was deleated.");
             }
-            catch (Exception ex)
+            catch (ShopException ex)
             {
                 return NotFound(ex.Message);
             }

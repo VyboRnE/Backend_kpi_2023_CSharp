@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LabBackend.Bussines.Models
+namespace LabBackend.Business.Models
 {
     public class CategoryModel
     {

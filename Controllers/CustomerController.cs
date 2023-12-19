@@ -1,5 +1,7 @@
 using LabBackend;
-using LabBackend.Bussines.Models;
+using LabBackend.Business.Interfaces;
+using LabBackend.Business.Models;
+using LabBackend.Business.Validation;
 using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
 
@@ -10,69 +12,63 @@ namespace LabBackeend.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ILogger<CustomerController> _logger;
-        private readonly MemoryCacheService<CustomerModel> _memoryCacheService;
-        public CustomerController(ILogger<CustomerController> logger, MemoryCacheService<CustomerModel> memoryCacheService)
+        private readonly ICustomerService _customerService;
+        public CustomerController(ICustomerService customerService)
         {
-            _logger = logger;
-            _memoryCacheService = memoryCacheService;
+            _customerService = customerService;
         }
         //user/<user_id>
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<ActionResult<CustomerModel>> GetById(int id)
         {
             try
             {
-                var customer = _memoryCacheService.GetById(id);
+                var customer = await _customerService.GetByIdAsync(id);
                 return Ok(customer);
             }
-            catch
+            catch (ShopException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
         //users
         [HttpGet]
-        public IActionResult Get()
+        public async Task<ActionResult<IEnumerable<CustomerModel>>> Get()
         {
             try
             {
-                var customers = _memoryCacheService.GetAll();
+                var customers = await _customerService.GetAllAsync();
                 return Ok(customers);
             }
-            catch
+            catch (ShopException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
-        //user?name=vasyl
+        //user
         [HttpPost]
-        public IActionResult Post([FromQuery]string name)
+        public async Task<ActionResult> Post([FromBody] CustomerModel customer)
         {
             try
             {
-                var customer = new CustomerModel
-                {
-                    Id = _memoryCacheService.index,
-                    Name = name
-                };
-                _memoryCacheService.Add(customer);
+                await _customerService.AddAsync(customer);
                 return Ok(customer);
             }
-            catch
+            catch (ShopException ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
         //user/<user_id>
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {
-                _memoryCacheService.DeleteById(id);
+                await _customerService.DeleteByIdAsync(id);
                 return Ok($"Customer {id} was deleated.");
             }
-            catch (Exception ex)
+            catch (ShopException ex)
             {
                 return NotFound(ex.Message);
             }

@@ -1,5 +1,7 @@
 ﻿using LabBackeend.Controllers;
-using LabBackend.Bussines.Models;
+using LabBackend.Business.Interfaces;
+using LabBackend.Business.Models;
+using LabBackend.Business.Validation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LabBackend.Controllers
@@ -9,70 +11,63 @@ namespace LabBackend.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ILogger<CategoryController> _logger;
-        private readonly MemoryCacheService<CategoryModel> _memoryCacheService;
-        //private int index = 0;
-        public CategoryController(ILogger<CategoryController> logger, MemoryCacheService<CategoryModel> memoryCacheService)
+        private readonly ICategoryService _categoryService;
+        public CategoryController(ICategoryService categoryService)
         {
-            _logger = logger;
-            _memoryCacheService = memoryCacheService;
+            _categoryService = categoryService;
         }
         //category/<category_id>
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<ActionResult<CategoryModel>> GetById(int id)
         {
             try
             {
-                var category = _memoryCacheService.GetById(id);
+                var category = await _categoryService.GetByIdAsync(id);
                 return Ok(category);
             }
-            catch
+            catch (ShopException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
         //category
         [HttpGet]
-        public IActionResult Get()
+        public async Task<ActionResult<IEnumerable<CategoryModel>>> Get()
         {
             try
             {
-                var categories = _memoryCacheService.GetAll();
+                var categories = await _categoryService.GetAllAsync();
                 return Ok(categories);
             }
-            catch
+            catch (ShopException ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
-        //category?name=chlib
+        //category
         [HttpPost]
-        public IActionResult Post([FromQuery] string name)
+        public async Task<ActionResult> Post([FromBody] CategoryModel model)
         {
             try
             {
-                var category = new CategoryModel
-                {
-                    Id = _memoryCacheService.index,
-                    Name = name
-                };
-                _memoryCacheService.Add(category);
-                return Ok(category);
+                await _categoryService.AddAsync(model);
+                return Ok(model);
             }
-            catch
+            catch (ShopException ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
         //category/<category_id>
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {
-                _memoryCacheService.DeleteById(id);
+                await _categoryService.DeleteByIdAsync(id);
                 return Ok($"Category {id} was deleated.");
             }
-            catch (Exception ex)
+            catch (ShopException ex)
             {
                 return NotFound(ex.Message);
             }

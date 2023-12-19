@@ -4,7 +4,7 @@ using LabBackend.Data.Interfaces;
 
 namespace LabBackend.Data
 {
-    public class UnitOfWork
+    public class UnitOfWork:IUnitOfWork
     {
         private StoreContext Context { get; set; }
         private ICustomerRepository _customerRepository;
@@ -24,7 +24,7 @@ namespace LabBackend.Data
             }
         }
 
-        public ICategoryRepository PersonRepository
+        public ICategoryRepository CategoryRepository
         {
             get
             {
@@ -34,7 +34,7 @@ namespace LabBackend.Data
             }
         }
 
-        public ICurrencyRepository ProductRepository
+        public ICurrencyRepository CurrencyRepository
         {
             get
             {
@@ -44,7 +44,7 @@ namespace LabBackend.Data
             }
         }
 
-        public IRecordRepository ProductCategoryRepository
+        public IRecordRepository RecordRepository
         {
             get
             {
