@@ -7,6 +7,7 @@ using LabBackend.Business.Services;
 using LabBackend.Data;
 using LabBackend.Data.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -26,22 +27,26 @@ namespace LabBackeend
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddRazorPages();
 
-            var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JwtConfig:Secret").Value);
+            var jwtConfig = builder.Configuration.GetSection("JwtConfig").Get<JwtConfig>();
+            var key = Encoding.UTF8.GetBytes(jwtConfig.Key);
             builder.Services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
                 .AddJwtBearer(options =>
                     {
                         options.TokenValidationParameters = new TokenValidationParameters
                         {
-                            ValidateIssuerSigningKey = true,
+                            ValidIssuer = jwtConfig.Issuer,
+                            ValidAudience = jwtConfig.Audience,
                             IssuerSigningKey = new SymmetricSecurityKey(key),
-                            ValidateIssuer = false,
-                            ValidateAudience = false
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
                         };
                     });
 
@@ -64,9 +69,8 @@ namespace LabBackeend
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
-            app.MapRazorPages();
 
             app.MapControllers();
 

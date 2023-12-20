@@ -58,19 +58,20 @@ namespace LabBackeend.Controllers
             }
         }
         //user
+        [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody] CustomerModel customer)
+        public async Task<ActionResult> Register([FromBody] RegisterModel newCustomer)
         {
             try
             {
                 string salt = Guid.NewGuid().ToString("N");
                 var updatedCustomer = new CustomerModel
                 {
-                    Email = customer.Email,
-                    Name = customer.Name,
-                    Username = customer.Username,
-                    CurrencyId = customer.CurrencyId,
-                    PasswordHash = HashPassword(customer.PasswordHash, salt),
+                    Email = newCustomer.Email,
+                    Name = newCustomer.Name,
+                    Username = newCustomer.Username,
+                    CurrencyId = newCustomer.CurrencyId,
+                    PasswordHash = HashPassword(newCustomer.PasswordHash, salt),
                     Salt = salt
                 };
                 await _customerService.AddAsync(updatedCustomer);
@@ -82,13 +83,14 @@ namespace LabBackeend.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginModel logCustomer)
         {
             try
             {
                 var customers = await _customerService.GetAllAsync();
-                var filteredCustomer = customers.SingleOrDefault(c =>
+                var filteredCustomer = customers.FirstOrDefault(c =>
                     c.Username == logCustomer.Username &&
                     c.PasswordHash == HashPassword(logCustomer.PasswordHash, c.Salt));
                 if(filteredCustomer is null) { return BadRequest("No user found. Username or password doesn't match."); }
@@ -118,28 +120,26 @@ namespace LabBackeend.Controllers
 
         private string GenerateJwtToken(CustomerModel user)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["JwtConfig:Secret"]);
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtConfig:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                new Claim(ClaimTypes.Name, user.Username),
-            }),
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JwtConfig:Issuer"],
+                audience: _configuration["JwtConfig:Audience"],
+                claims: new[] {
+            new Claim(ClaimTypes.NameIdentifier, user.Username),
+            new Claim(ClaimTypes.Email,user.Email)
+                },
+                expires: DateTime.Now.AddHours(8), 
+                signingCredentials: credentials
+            );
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
         private string HashPassword(string password, string salt)
         {
-            // Generate a 128-bit salt using a secure PRNG
             byte[] saltBytes = Encoding.UTF8.GetBytes(salt);
 
-            // derive a 256-bit subkey (use HMACSHA1 with 10000 iterations)
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password,
                 salt: saltBytes,
