@@ -20,10 +20,10 @@ namespace LabBackend.Business.Services
         public async Task AddAsync(RecordModel model)
         {
             Validate(model);
-            if (model.CurrencyId is null)
+            if (model.RCurrencyId is null)
             {
                 var cust =await UnitOfWork.CustomerRepository.GetByIdAsync(model.CustomerId);
-                model.CurrencyId = cust.CurrencyId;
+                model.RCurrencyId = cust.CurrencyId;
             }
             var record = Mapper.Map<Record>(model);
             await UnitOfWork.RecordRepository.AddAsync(record);

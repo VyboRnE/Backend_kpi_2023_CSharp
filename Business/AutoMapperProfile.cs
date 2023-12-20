@@ -16,8 +16,7 @@ namespace LabBackend.Business
             CreateMap<Record, RecordModel>()
                 .ReverseMap()
                 .ForMember(rm => rm.Customer, opt => opt.Ignore())
-                .ForMember(rm => rm.Category, opt => opt.Ignore())
-                .ForMember(rm => rm.Currency, opt => opt.Ignore());
+                .ForMember(rm => rm.Category, opt => opt.Ignore());
         }
     }
 }

@@ -7,7 +7,7 @@ namespace LabBackend.Data
         public StoreContext() { }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"server=database-backend-labs.ccntnban7dnr.eu-north-1.rds.amazonaws.com,1433;Database=database-backend-labs;Integrated Security=false;User Id=admin;Password=KOIlpI6TGY;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer(@"server=database-1.ccntnban7dnr.eu-north-1.rds.amazonaws.com,1433;Database=database-1;Integrated Security=false;User Id=admin;Password=KOIlpI6TGY;TrustServerCertificate=True;");
         }
         public StoreContext(DbContextOptions<StoreContext> options):base(options)
         {

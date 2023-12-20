@@ -8,7 +8,7 @@ namespace LabBackend.Business.Models
         public int Id { get; set; }
         public int CustomerId { get; set; }
         public int CategoryId { get; set; }
-        public int? CurrencyId { get; set; }
+        public int? RCurrencyId { get; set; }
         public DateTime OrderTime { get; set; }
         public decimal ReceiptSum { get; set; }
     }

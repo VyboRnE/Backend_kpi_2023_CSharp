@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LabBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class baseMigration : Migration
+    public partial class BaseMigr : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -66,6 +66,7 @@ namespace LabBackend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
+                    RCurrencyId = table.Column<int>(type: "int", nullable: false),
                     OrderTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReceiptSum = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
@@ -85,6 +86,11 @@ namespace LabBackend.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customer_CurrencyId",
+                table: "Customer",
+                column: "CurrencyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Record_CategoryId",

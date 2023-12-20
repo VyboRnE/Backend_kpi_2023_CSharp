@@ -16,7 +16,6 @@ namespace LabBackend.Data.Repositories
             return await Table
                 .Include(c => c.Category)
                 .Include(p => p.Customer)
-                .Include(k => k.Currency)
                 .ToListAsync();
         }
 
@@ -25,7 +24,6 @@ namespace LabBackend.Data.Repositories
             return await Table
                 .Include(c => c.Category)
                 .Include(p => p.Customer)
-                .Include(k => k.Currency)
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
     }

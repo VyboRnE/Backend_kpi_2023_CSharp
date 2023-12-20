@@ -92,14 +92,14 @@ namespace LabBackend.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CurrencyId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("OrderTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("RCurrencyId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("ReceiptSum")
                         .HasColumnType("decimal(18,2)");
@@ -107,8 +107,6 @@ namespace LabBackend.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("CurrencyId");
 
                     b.HasIndex("CustomerId");
 
@@ -134,12 +132,6 @@ namespace LabBackend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LabBackend.Data.Entities.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("LabBackend.Data.Entities.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
@@ -147,8 +139,6 @@ namespace LabBackend.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-
-                    b.Navigation("Currency");
 
                     b.Navigation("Customer");
                 });
