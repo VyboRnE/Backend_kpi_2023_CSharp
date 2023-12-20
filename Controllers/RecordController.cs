@@ -2,17 +2,18 @@
 using LabBackend.Business.Interfaces;
 using LabBackend.Business.Models;
 using LabBackend.Business.Validation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
 
 namespace LabBackend.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class RecordController : ControllerBase
     {
         private readonly ILogger<RecordController> _logger;
-        private readonly MemoryCacheService<RecordModel> _memoryCacheService;
         private readonly IRecordService _recordService;
         public RecordController(IRecordService recordService)
         {

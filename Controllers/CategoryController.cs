@@ -2,10 +2,12 @@
 using LabBackend.Business.Interfaces;
 using LabBackend.Business.Models;
 using LabBackend.Business.Validation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LabBackend.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class CategoryController : ControllerBase
